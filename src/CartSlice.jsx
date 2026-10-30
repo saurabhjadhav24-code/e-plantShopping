@@ -1,61 +1,59 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  items: [],
+items: [],
 };
 
 const cartSlice = createSlice({
-  name: "cart",
-  initialState,
-  reducers: {
-    addToCart: (state, action) => {
-      const existingItem = state.items.find(
-        (item) => item.id === action.payload.id
-      );
+name: "cart",
+initialState,
+reducers: {
+addItem: (state, action) => {
+const product = action.payload;
+const existingItem = state.items.find(
+(item) => item.name === product.name
+);
 
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        state.items.push({
-          ...action.payload,
-          quantity: 1,
-        });
-      }
-    },
+```
+  if (existingItem) {
+    existingItem.quantity += 1;
+  } else {
+    state.items.push({
+      ...product,
+      quantity: 1,
+    });
+  }
+},
 
-    increaseQuantity: (state, action) => {
-      const item = state.items.find(
-        (item) => item.id === action.payload
-      );
+removeItem: (state, action) => {
+  state.items = state.items.filter(
+    (item) => item.name !== action.payload
+  );
+},
 
-      if (item) {
-        item.quantity += 1;
-      }
-    },
+updateQuantity: (state, action) => {
+  const { name, quantity } = action.payload;
 
-    decreaseQuantity: (state, action) => {
-      const item = state.items.find(
-        (item) => item.id === action.payload
-      );
+  const item = state.items.find(
+    (product) => product.name === name
+  );
 
-      if (item && item.quantity > 1) {
-        item.quantity -= 1;
-      }
-    },
-
-    removeFromCart: (state, action) => {
+  if (item) {
+    if (quantity <= 0) {
       state.items = state.items.filter(
-        (item) => item.id !== action.payload
+        (product) => product.name !== name
       );
-    },
-  },
+    } else {
+      item.quantity = quantity;
+    }
+  }
+},
+```
+
+},
 });
 
-export const {
-  addToCart,
-  increaseQuantity,
-  decreaseQuantity,
-  removeFromCart,
-} = cartSlice.actions;
+export const { addItem, removeItem, updateQuantity } =
+cartSlice.actions;
 
 export default cartSlice.reducer;
